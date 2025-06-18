@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Application Status</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+        }
+        .status-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .status-indicator {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #4CAF50;
+            margin: 1rem auto;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .timestamp {
+            color: #666;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="status-card">
+        <h1>Application Status</h1>
+        <div class="status-indicator"></div>
+        <h2>System is Healthy</h2>
+        <p>Your application is running successfully on AWS EC2</p>
+        <p class="timestamp" id="timestamp">Last Updated: Loading...</p>
+    </div>
+    <script>
+        function updateTimestamp() {
+            fetch('/health')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('timestamp').textContent = 
+                        'Last Updated: ' + new Date(data.timestamp).toLocaleString();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('timestamp').textContent = 
+                        'Error connecting to server';
+                });
+        }
+        
+        updateTimestamp();
+        setInterval(updateTimestamp, 5000);
+    </script>
+</body>
+</html>
